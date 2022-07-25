@@ -1,0 +1,74 @@
+/*Q1.) (25 points) Use the ap database for this question. Write a query that selects vendors
+from California and replicates the result set shown below, matching all data and format aspects,
+including column headers. Pay special attention to the order of rows.*/
+
+/* Answer 1*/
+
+
+USE ap;
+SELECT vendor_name AS 'Vendor', CONCAT('Phone #: ', vendor_phone) AS 'Phone Number', vendor_city AS 'City', vendor_address1 AS "Address", vendor_state
+FROM vendors
+WHERE vendor_state > 'AZ' AND vendor_state < 'CO'
+ORDER BY vendor_city, vendor_name;
+
+/*Q2.) (25 points) Use the om database for this question. Write a query that replicates the result
+set below, matching all data and format aspects, including column headers. For this question,
+you must use a UNION. Points will be deducted for using IFNULL, COALESCE, etc.
+*/
+
+/*Answer 2 */
+
+
+USE om;
+  SELECT order_date, shipped_date,customer_state, customer_address, CONCAT( customer_first_name , '',customer_last_name) AS customer_full_name
+    FROM customers c 
+        RIGHT JOIN orders o
+        ON c.customer_id = o.customer_id
+UNION 
+    SELECT order_date, shipped_date, c.customer_state, c.customer_address, CONCAT( c.customer_first_name , '',c.customer_last_name) AS customer_full_name
+    FROM orders o
+        LEFT JOIN customers c
+        ON o.customer_id = c.customer_id
+        ORDER BY order_date DESC , customer_full_name;
+
+
+
+/*Q3.) (25 points) Use the ap database for this question. Write a query that selects vendors and
+any invoice they have to replicate the result set below, matching all data and format aspects,
+including column headers. This question includes 3 tables.
+*/
+
+/*Answer 3 */
+
+USE ap;
+SELECT invoice_number, invoice_total, vendor_name,CONCAT(first_name, last_name) AS vendor_contact_name,vendor_phone, 
+vendor_address1 AS vendor_address
+FROM vendors v LEFT JOIN invoices i 
+ON  v.vendor_id=i.vendor_id
+LEFT JOIN
+vendor_contacts vc 
+ON vc.vendor_id=i.vendor_id
+ORDER BY  vendor_name;
+
+
+
+/* Q4.) (25 points) Use the ap database for this question. Select all invoices due in the month of
+June and replicate the result set below, matching all data and format aspects, including column
+headers.*/
+
+/*Answer 4*/
+
+USE ap;
+SELECT vendor_name, concat(vendor_city, ', ', vendor_state) AS 'vendor_city/state', 
+        invoice_number, payment_total, invoice_date, invoice_due_date 
+        FROM invoices i 
+        JOIN vendors v 
+        ON i.vendor_id = v.vendor_id 
+        WHERE MONTH (invoice_due_date) >=6  AND MONTH(invoice_due_date) < 7
+        ORDER BY invoice_due_date, vendor_name;
+
+
+
+
+
+
